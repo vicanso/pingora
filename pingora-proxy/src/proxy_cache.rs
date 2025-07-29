@@ -390,13 +390,15 @@ impl<SV> HttpProxy<SV> {
 
                         // write to downstream
                         let b = body.unwrap_or_default();
-                        if let Err(e) = session
-                            .as_mut()
-                            .write_response_body(b, end)
-                            .await
-                            .map_err(|e| e.into_down())
-                        {
-                            return (false, Some(e));
+                        if !b.is_empty() {
+                            if let Err(e) = session
+                                .as_mut()
+                                .write_response_body(b, end)
+                                .await
+                                .map_err(|e| e.into_down())
+                            {
+                                return (false, Some(e));
+                            }
                         }
                         if end {
                             break;
